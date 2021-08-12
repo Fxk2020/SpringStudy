@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com"/>
+
+<!--    spring通过bean自动创建对象
+        Hello hello = new Hello();
+
+        id变量名，class路径
+        属性-property：属性名：name；值：value。
+
+  -->
+
+<!--  无参构造函数  -->
+    <bean id="hello1" class="com.ioc.pojo.Hello">
+        <property name="str" value="hello spring!"/>
+    </bean>
+
+<!--  通过形参名构造函数  -->
+    <bean id="hello2" class="com.ioc.pojo.Hello">
+        <constructor-arg name="a" value="15"/>
+        <constructor-arg name="str" value="hello spring"/>
+    </bean>
+
+<!--  通过下标构造函数  -->
+    <bean id="hello3" class="com.ioc.pojo.Hello">
+        <constructor-arg index="0" value="hello spring"/>
+        <constructor-arg index="1" value="15"/>
+    </bean>
+
+    <bean id="mysql" class="com.ioc.dao.UserDaoMysqlImpl">
+
+    </bean>
+
+    <bean id="oracle" class="com.ioc.dao.UserDaoOracleImpl">
+
+    </bean>
+
+    <bean id="service1" class="com.ioc.service.UserServiceImpl">
+        <!--rel是指向spring管理的一个bean-->
+        <property name="UserDao" ref="mysql"/>
+    </bean>
+
+    <bean id="address_study" class="com.ioc.pojo.Address">
+        <property name="address" value="文昌街道"/>
+    </bean>
+
+    <bean id="student" class="com.ioc.pojo.Student">
+        <property name="name" value="fxk"/>
+        <property name="age" value="22"/>
+        <property name="address" ref="address_study"/>
+
+<!--        注入数组    -->
+        <property name="books">
+            <array>
+                <value>红楼梦</value>
+                <value>三国演义</value>
+                <value>水浒传</value>
+                <value>西游记</value>
+            </array>
+        </property>
+
+<!--        注入MAP   -->
+        <property name="hobbies">
+            <map>
+                <entry key="1" value="0002"/>
+                <entry key="2" value="0005"/>
+                <entry key="3" value="0005"/>
+            </map>
+        </property>
+
+<!--注入SET-->
+        <property name="games">
+            <set>
+                <value>红色警戒</value>
+                <value>王者荣耀</value>
+            </set>
+        </property>
+
+<!--注入properties-->
+        <property name="info">
+            <props>
+                <prop key="administrator">administrator@example.org</prop>
+                <prop key="support">support@example.org</prop>
+                <prop key="development">development@example.org</prop>
+            </props>
+        </property>
+    </bean>
+
+<!--    p标签-->
+    <bean id="address1" class="com.ioc.pojo.Address" p:address="济南市"/>
+
+<!--    c标签-->
+    <bean id="student1" class="com.ioc.pojo.Student" c:name="fxk" c:age="22" c:address-ref="address1"/>
+
+    <bean id="student2" class="com.ioc.pojo.Student" c:name="fxk" c:age="20" c:address-ref="address1" scope="prototype"/>
+
+    <bean id="cat" class="com.ioc.pojo.Cat" p:name="小喵"/>
+    <bean id="dog1" class="com.ioc.pojo.Dog" p:name="旺财"/>
+    <bean id="dog2" class="com.ioc.pojo.Dog" p:name="小旺财"/>
+    <bean id="people" class="com.ioc.pojo.Person" p:name="xf"/>
+<!--    <bean id="people" class="com.ioc.pojo.Person" p:name="xf" p:dog-ref="dog" p:cat-ref="cat"/>-->
+<!--    <bean id="people" class="com.ioc.pojo.Person" p:name="xf" autowire="byName"/>-->
+
+<!--  AOP   -->
+
+    <bean id="userService" class="com.aop.dao.UserDaoImpl"/>
+    <bean id="logBefore" class="com.aop.log.Log"/>
+    <bean id="logAfter" class="com.aop.log.Log2"/>
+
+    <!--开启注解支持-->
+    <aop:aspectj-autoproxy/>
+
+<!--    <aop:config>-->
+<!--        &lt;!&ndash;切入点   execution要执行的位置-->
+<!--        For example : 'execution(* com.xyz.myapp.service.*.*(..))'&ndash;&gt;-->
+<!--        <aop:pointcut id="pointCutss"-->
+<!--                      expression='execution(* com.aop.dao.UserDaoImpl.*(..))' />-->
+
+<!--        &lt;!&ndash;切入的内容&ndash;&gt;-->
+<!--        <aop:advisor advice-ref="logAfter" pointcut-ref="pointCutss"/>-->
+<!--        <aop:advisor advice-ref="logBefore" pointcut-ref="pointCutss"/>-->
+
+<!--    </aop:config>-->
+
+<!--  数据库  -->
+    <!--数据源的配置-->
+    <bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/vueblog?userUnicode=true"/>
+        <property name="username" value="root"/>
+        <property name="password" value="Fxk199959"/>
+    </bean>
+    <!--mybatis-sqlSessionFactory的配置-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="datasource" />
+        <property name="transactionFactory">
+            <bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory"/>
+        </property>
+    </bean>
+    <!--SqlSessionTemplate的配置-->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory" />
+    </bean>
+
+    <!--  将接口注入spring  -->
+    <bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.mybatis.dao.UserMapper" />
+        <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+    </bean>
+    <bean id="blogMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.transaction.dao.BlogMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!--实现类初始化-->
+    <bean id="UserService" class="com.mybatis.dao.UserMapperImpl">
+        <constructor-arg index="0" ref="userMapper"/>
+    </bean>
+
+    <bean id="userDao" class="com.mybatis.dao.UserDao">
+        <property name="sqlSession" ref="sqlSession"/>
+    </bean>
+
+    <!--开启事务处理功能-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <constructor-arg ref="datasource"/>
+    </bean>
+<!--    <tx:jta-transaction-manager/>-->
+
+</beans>

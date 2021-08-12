@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--绑定接口-UserMapper-->
+<mapper namespace="com.mybatis.dao.UserMapper">
+
+    <!-- mybatis 非常的智能，返回值统一使用 resultMap="BaseResultMap"，mybatis会根据查询到的条目数量自动进行判断，如果是一条就返回对象，如果是多条就返回List对象列表-->
+    <select id="findUserByName" resultType="com.mybatis.pojo.User">
+        select * from m_user where username=#{userName}
+    </select>
+
+</mapper>
